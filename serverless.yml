@@ -1,0 +1,32 @@
+# https://github.com/prisma/prisma/issues/6644
+service: test
+
+provider:
+  name: aws
+  lambdaHashingVersion: 20201221
+  runtime: nodejs14.x
+  stage: dev
+  region: us-west-2
+
+functions:
+  api:
+    handler: 'dist/serverless.handler'
+    events:
+      - httpApi:
+          path: /
+          method: '*'
+      - httpApi:
+          path: /{proxy+}
+          method: '*'
+    #package: # these don't work
+    #  patterns:
+    #    - '!node_modules/.prisma/client/query-engine-*'
+    #    - 'node_modules/.prisma/client/query-engine-rhel-*'
+
+# these work
+package:
+  patterns:
+    - '!node_modules/.prisma/client/query-engine-*'
+    - 'node_modules/.prisma/client/query-engine-rhel-*'
+#    - '!node_modules/@prisma/engines/query-engine-*'
+#    - '!node_modules/prisma/query-engine-*'
